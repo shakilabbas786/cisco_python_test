@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		.action{
+			margin-left: 20px;
+		}
+		td{
+			padding:5px;
+		}
+	</style>
+	<title>Cisco Home</title>
+		<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+		<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+		<script src="https://cdn.datatables.net/1.10.21/js/dataTables.jqueryui.min.js"></script>
+		<script src="https://cdn.datatables.net/scroller/2.0.2/js/dataTables.scroller.min.js"></script>
+	<script type="text/javascript">
+		var data1;
+		{% autoescape off %}
+		data1 = JSON.parse('{{data}}');		
+		{% endautoescape %}
+		$(document).ready(function(){
+			$("#routers").DataTable({
+				data:data1
+			});
+
+			$("#create").click(function(){
+				var total = $("#no_of_routers").val()
+				$.ajax({
+					url:"/routers/create_random_routers/",
+					data:{"total":total},
+					type:"POST",
+					success:function(resp){
+						alert("Routers Created");
+						location.reload();
+					},
+					error:function(err){
+						alert("Server Error");
+					}
+				})
+			})
+
+			$("#delete").click(function(){
+				var sapid = $("#delete_router").val()
+				$.ajax({
+					url:"/routers/delete_router/",
+					data:{"sapid":sapid},
+					type:"POST",
+					success:function(resp){
+						alert("Router Deleted");
+						location.reload();
+					},
+					error:function(err){
+						alert("Server Error");
+					}
+				})
+			})
+
+		})
+	</script>
+</head>
+<body>
+	<a href="/routers/home/"><input type="button" class="action" value="Home"/></a>
+	<input type="button" id="create" class="action" value="Create Router"/>:<input type="text" placeholder="Enter no" id="no_of_routers"/>
+	<input type="button" id="delete" class="action" value="Delete Router"/>:<input type="text" placeholder="Enter sapip to delete" id="delete_router"/>
+	<input type="button" id="update" class="action" value="Update Router"/>
+	<br><br>
+	<table id="routers" border=1>
+		<thead>
+			<tr><th>SAPID</th><th>LOOPBACK</th><th>HOSTNAME</th><th>MACADDRESS</th></tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+</body>
+</html>
